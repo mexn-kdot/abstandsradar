@@ -1,0 +1,15 @@
+# Diese Datei sagt Git, welche Dateien es IGNORIEREN soll.
+# Typisch: automatisch erzeugte Dateien, die man jederzeit neu erzeugen kann.
+
+# Python: Zwischenspeicher und virtuelle Umgebung
+__pycache__/
+*.pyc
+.venv/
+
+# Arduino: Kompilierte Dateien
+build/
+
+# Editor- und Systemdateien
+.vscode/
+Thumbs.db
+desktop.ini
