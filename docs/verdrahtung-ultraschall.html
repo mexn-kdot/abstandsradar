@@ -1,0 +1,171 @@
+<title>Radar Sensor-Verdrahtung</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: Werkstatt-Datenblatt im Stil "Servokopf Schaltplan" – Plan oben, darunter Verdrahtungsliste und Reihenfolge */
+:root{
+  --bg:#f6f7f5; --panel:#ffffff; --fg:#1d2321; --muted:#5d6763; --line:#2b3330; --grid:#e3e7e4; --accent:#0f7a5c;
+  --w-plus:#d22f27; --w-gnd:#5a3a22; --w-trig:#2563c9; --w-echo:#178a3c; --w-usb:#8a948f; --w-led:#e8820c;
+  --warn-bg:#fff4e0; --warn-fg:#7a4a00;
+  --f-sans:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif; --f-mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --panel:#1c2220; --fg:#e7ece9; --muted:#9aa5a0; --line:#cfd8d3; --grid:#28302d; --accent:#4cc79c;
+  --w-plus:#ff6a5f; --w-gnd:#c08a5c; --w-trig:#6ea0ff; --w-echo:#4fcf78; --w-usb:#7d8883; --w-led:#ffa53d;
+  --warn-bg:#3a2c12; --warn-fg:#ffd9a0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --panel:#1c2220; --fg:#e7ece9; --muted:#9aa5a0; --line:#cfd8d3; --grid:#28302d; --accent:#4cc79c;
+  --w-plus:#ff6a5f; --w-gnd:#c08a5c; --w-trig:#6ea0ff; --w-echo:#4fcf78; --w-usb:#7d8883; --w-led:#ffa53d;
+  --warn-bg:#3a2c12; --warn-fg:#ffd9a0; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-sans);font-size:15px;line-height:1.55}
+.wrap{max-width:1000px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+header h1{font-size:1.7rem;margin:0;text-wrap:balance;letter-spacing:-.01em}
+header p{margin:.35rem 0 0;color:var(--muted);max-width:68ch}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.plan{background:var(--panel);border:1px solid var(--grid);border-radius:10px;padding:12px;overflow-x:auto}
+.plan svg{display:block;min-width:760px;width:100%;height:auto}
+svg text{font-family:var(--f-mono);fill:var(--fg);font-size:12px}
+svg .t-s{font-size:10.5px;fill:var(--muted)}
+svg .t-b{font-family:var(--f-sans);font-weight:700;font-size:13px}
+svg .box{fill:var(--panel);stroke:var(--line);stroke-width:1.6}
+svg .pin{fill:var(--line)} svg .pin2{fill:none;stroke:var(--muted);stroke-width:1.2}
+svg .w{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85rem;color:var(--muted);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:22px;height:4px;border-radius:2px}
+h2{font-size:1.15rem;margin:0 0 10px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--grid);vertical-align:top}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td code,li code{font-family:var(--f-mono);font-size:.88em}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.cols>section{min-width:0}
+ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.warn{background:var(--warn-bg);color:var(--warn-fg);border-radius:8px;padding:12px 14px;font-size:.92rem}
+.warn strong{display:block;margin-bottom:2px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Abstandsradar · Phase 2 · Elektronik</div>
+  <h1>Ultraschallsensor am Mega</h1>
+  <p>Arduino Mega 2560 aus dem Elegoo-Kit, Ultraschallsensor HC-SR04, Versorgung über das USB-Kabel vom PC. Vier Kabel Buchse–Stecker (F-M), kein Steckbrett nötig. Programm: <code>arduino/ultraschall_test</code>.</p>
+</header>
+
+<div>
+<div class="plan">
+<svg viewBox="0 0 900 640" role="img" aria-labelledby="svgt">
+  <title id="svgt">Schaltplan in Board-Lage: PC per USB an die Mega-USB-Buchse. HC-SR04, Stiftleiste von oben nach unten VCC, Trig, Echo, GND. VCC an 5V und GND an GND der linken POWER-Leiste, Trig an Pin 6, Echo an Pin 7; Trig und Echo kreuzen sich einmal ohne Verbindung.</title>
+
+  <!-- PC -->
+  <rect class="box" x="20" y="50" width="140" height="100" rx="10"/>
+  <text class="t-b" x="34" y="98">PC</text><text class="t-s" x="34" y="116">USB, Port COM4</text>
+  <rect class="pin" x="152" y="72" width="14" height="16" rx="2"/><text class="t-s" x="122" y="70">USB</text>
+  <path class="w" d="M166 80 H180 V20 H490 V36" stroke="var(--w-usb)" stroke-width="6"/>
+  <text class="t-s" x="196" y="14">USB-Kabel A–B (Kit) · Strom und Daten</text>
+
+  <!-- Mega 2560 -->
+  <rect class="box" x="300" y="60" width="220" height="500" rx="8"/>
+  <rect class="box" x="306" y="48" width="40" height="40" rx="3"/><text class="t-s" x="352" y="80">Hohlstecker</text>
+  <rect class="box" x="466" y="36" width="48" height="46" rx="3"/><text class="t-s" x="418" y="100">USB-B</text>
+  <text class="t-b" x="340" y="148">Mega 2560</text>
+  <text class="t-s" x="340" y="164">Draufsicht, USB oben</text>
+  <text class="t-s" x="320" y="192">POWER</text><text class="t-s" x="320" y="346">ANALOG IN</text>
+  <rect x="455" y="203" width="9" height="13" rx="2" fill="var(--w-led)"/><text class="t-s" x="420" y="214">LED L</text>
+
+  <circle class="pin2" cx="300" cy="200" r="3.2"/><text x="310" y="204" class="t-s">IOREF</text>
+  <circle class="pin2" cx="300" cy="220" r="3.2"/><text x="310" y="224" class="t-s">RESET</text>
+  <circle class="pin2" cx="300" cy="240" r="3.2"/><text x="310" y="244" class="t-s">3.3V</text>
+  <circle class="pin" cx="300" cy="260" r="5"/><text x="310" y="264">5V</text>
+  <circle class="pin" cx="300" cy="280" r="5"/><text x="310" y="284">GND</text>
+  <circle class="pin2" cx="300" cy="300" r="3.2"/><text x="310" y="304" class="t-s">GND</text>
+  <circle class="pin2" cx="300" cy="320" r="3.2"/><text x="310" y="324" class="t-s">Vin</text>
+  <circle class="pin2" cx="300" cy="360" r="3.2"/><text x="310" y="364" class="t-s">A0</text>
+  <circle class="pin2" cx="300" cy="380" r="3.2"/><text x="310" y="384" class="t-s">A1</text>
+  <circle class="pin2" cx="300" cy="400" r="3.2"/><text x="310" y="404" class="t-s">A2</text>
+  <circle class="pin2" cx="300" cy="420" r="3.2"/><text x="310" y="424" class="t-s">A3</text>
+
+  <circle class="pin2" cx="520" cy="170" r="3.2"/><text x="510" y="174" text-anchor="end" class="t-s">AREF</text>
+  <circle class="pin2" cx="520" cy="190" r="3.2"/><text x="510" y="194" text-anchor="end" class="t-s">GND</text>
+  <circle class="pin2" cx="520" cy="210" r="3.2"/><text x="510" y="214" text-anchor="end" class="t-s">13</text>
+  <circle class="pin2" cx="520" cy="230" r="3.2"/><text x="510" y="234" text-anchor="end" class="t-s">12</text>
+  <circle class="pin2" cx="520" cy="250" r="3.2"/><text x="510" y="254" text-anchor="end" class="t-s">11</text>
+  <circle class="pin2" cx="520" cy="270" r="3.2"/><text x="510" y="274" text-anchor="end" class="t-s">10</text>
+  <circle class="pin2" cx="520" cy="290" r="3.2"/><text x="510" y="294" text-anchor="end" class="t-s">9</text>
+  <circle class="pin2" cx="520" cy="310" r="3.2"/><text x="510" y="314" text-anchor="end" class="t-s">8</text>
+  <circle class="pin" cx="520" cy="340" r="5"/><text x="510" y="344" text-anchor="end">7</text>
+  <circle class="pin" cx="520" cy="360" r="5"/><text x="510" y="364" text-anchor="end">6</text>
+  <circle class="pin2" cx="520" cy="380" r="3.2"/><text x="510" y="384" text-anchor="end" class="t-s">5</text>
+  <circle class="pin2" cx="520" cy="400" r="3.2"/><text x="510" y="404" text-anchor="end" class="t-s">4</text>
+  <circle class="pin2" cx="520" cy="420" r="3.2"/><text x="510" y="424" text-anchor="end" class="t-s">3</text>
+  <circle class="pin2" cx="520" cy="440" r="3.2"/><text x="510" y="444" text-anchor="end" class="t-s">2</text>
+  <circle class="pin2" cx="520" cy="460" r="3.2"/><text x="510" y="464" text-anchor="end" class="t-s">TX0 1</text>
+  <circle class="pin2" cx="520" cy="480" r="3.2"/><text x="510" y="484" text-anchor="end" class="t-s">RX0 0</text>
+  <text class="t-s" x="526" y="330">PWM-Leiste</text>
+
+  <!-- HC-SR04, um 90° gedreht: Pins zeigen nach links -->
+  <rect class="box" x="660" y="290" width="200" height="120" rx="6"/>
+  <circle cx="790" cy="322" r="24" fill="none" stroke="var(--line)" stroke-width="1.6"/>
+  <circle cx="790" cy="322" r="12" fill="none" stroke="var(--line)" stroke-width="1.2"/>
+  <circle cx="790" cy="378" r="24" fill="none" stroke="var(--line)" stroke-width="1.6"/>
+  <circle cx="790" cy="378" r="12" fill="none" stroke="var(--line)" stroke-width="1.2"/>
+  <text class="t-s" x="822" y="326">T</text><text class="t-s" x="822" y="382">R</text>
+  <rect class="box" x="644" y="310" width="16" height="80" rx="2"/>
+  <circle class="pin" cx="640" cy="320" r="4"/><circle class="pin" cx="640" cy="340" r="4"/><circle class="pin" cx="640" cy="360" r="4"/><circle class="pin" cx="640" cy="380" r="4"/>
+  <text x="668" y="324">VCC</text><text x="668" y="344">Trig</text><text x="668" y="364">Echo</text><text x="668" y="384">GND</text>
+  <text class="t-b" x="660" y="432">Ultraschallsensor HC-SR04</text>
+  <text class="t-s" x="660" y="448">gedreht gezeichnet, Stiftleiste links</text>
+  <text class="t-s" x="660" y="462">maßgeblich ist die Beschriftung auf der Platine</text>
+
+  <!-- Kabel -->
+  <path class="w" d="M520 340 H590 V360 H636" stroke="var(--w-echo)"/>
+  <path class="w" d="M520 360 H560 V350 H584 A6 6 0 0 1 596 350 H615 V340 H636" stroke="var(--w-trig)"/>
+  <path class="w" d="M300 280 H252 V590 H620 V380 H636" stroke="var(--w-gnd)"/>
+  <path class="w" d="M300 260 H238 V604 H880 V280 H625 V320 H636" stroke="var(--w-plus)"/>
+  <text class="t-s" x="262" y="580">GND (linke Leiste, neben 5V)</text>
+  <text class="t-s" x="262" y="624">5V vom Mega (linke Leiste POWER), außen herum</text>
+</svg>
+</div>
+<div class="legend">
+  <span><i style="background:var(--w-plus)"></i>VCC → 5V</span>
+  <span><i style="background:var(--w-gnd)"></i>GND → GND</span>
+  <span><i style="background:var(--w-trig)"></i>Trig → 6</span>
+  <span><i style="background:var(--w-echo)"></i>Echo → 7</span>
+  <span>gefüllte Punkte = belegte Pins · leere Kreise = Pins, die frei bleiben · Bogen = Kreuzung ohne Verbindung</span>
+</div>
+</div>
+
+<section>
+  <h2>Verdrahtungsliste</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Von (Sensor)</th><th>Nach (Mega)</th><th>Hinweis</th></tr></thead>
+    <tbody>
+      <tr><td><span class="sw" style="background:var(--w-plus)"></span><code>VCC</code></td><td>linke Leiste POWER <code>5V</code></td><td>rotes Kabel nehmen</td></tr>
+      <tr><td><span class="sw" style="background:var(--w-gnd)"></span><code>GND</code></td><td>linke Leiste POWER <code>GND</code> direkt unter <code>5V</code></td><td>schwarzes oder braunes Kabel. Alle GND-Pins sind intern verbunden, jeder andere <code>GND</code> geht genauso.</td></tr>
+      <tr><td><span class="sw" style="background:var(--w-trig)"></span><code>Trig</code></td><td>rechte Leiste (PWM) <code>6</code></td><td>Startimpuls vom Arduino zum Sensor</td></tr>
+      <tr><td><span class="sw" style="background:var(--w-echo)"></span><code>Echo</code></td><td>rechte Leiste (PWM) <code>7</code></td><td>Laufzeit-Signal vom Sensor zurück</td></tr>
+      <tr><td>PC USB</td><td>Mega USB-B-Buchse</td><td>erst ganz am Ende einstecken</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<div class="cols">
+<section>
+  <h2>Reihenfolge</h2>
+  <ol>
+    <li>USB-Kabel vom Mega abziehen. Verdrahtet wird stromlos.</li>
+    <li>Kabel mit der Buchse auf die vier Stifte des Sensors stecken. Die Beschriftung <code>VCC Trig Echo GND</code> steht direkt an den Stiften. Nimm vier verschiedenfarbige Kabel, dann lässt sich die Kreuzung von Trig und Echo leicht verfolgen.</li>
+    <li>Die Stecker-Enden nach der Liste in die Mega-Leisten stecken. Die Pin-Nummern stehen weiß aufgedruckt neben den Buchsen.</li>
+    <li>Kontrolle: <code>VCC</code> an <code>5V</code>, <code>GND</code> an <code>GND</code>. Erst dann USB einstecken.</li>
+    <li>Sensor mit den „Augen“ frei in den Raum richten, nicht direkt auf den Tisch.</li>
+  </ol>
+</section>
+<section style="display:flex;flex-direction:column;gap:12px">
+  <div class="warn"><strong>VCC und GND nicht vertauschen</strong>Das ist der einzige Fehler in diesem Aufbau, der den Sensor beschädigen kann. Trig und Echo vertauscht ist harmlos: Dann kommt nur „kein Echo“.</div>
+  <div class="warn"><strong>Messbereich</strong>Der HC-SR04 misst zuverlässig von etwa 2 cm bis 4 m. Weiche Stoffe und schräge Flächen schlucken oder lenken das Echo ab, dann erscheint „kein Echo“.</div>
+</section>
+</div>
+</div>

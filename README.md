@@ -30,8 +30,8 @@ Die Ordner entstehen, sobald es dort den ersten Inhalt gibt – Git speichert ke
 
 ## Fahrplan
 
-- [ ] **Phase 1:** Repo anlegen, erster Commit
-- [ ] **Phase 2:** LED blinkt (Upload funktioniert), Ultraschallsensor auslesen
+- [x] **Phase 1:** Repo anlegen, erster Commit
+- [x] **Phase 2:** LED blinkt (Upload funktioniert), Ultraschallsensor auslesen – Verdrahtung: `docs/verdrahtung-ultraschall.html`
 - [ ] **Phase 3:** Servo schwenkt, Arduino sendet `Winkel,Abstand`
 - [ ] **Phase 4:** Python-Radarbild am PC
 - [ ] **Phase 5:** Halter konstruieren (Fusion-MCP), drucken, montieren
