@@ -1,0 +1,231 @@
+<title>Radar Komplett-Verdrahtung</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: Werkstatt-Datenblatt im Stil "Servokopf Schaltplan" – Plan oben, darunter Verdrahtungsliste und Reihenfolge */
+:root{
+  --bg:#f6f7f5; --panel:#ffffff; --fg:#1d2321; --muted:#5d6763; --line:#2b3330; --grid:#e3e7e4; --accent:#0f7a5c;
+  --w-plus:#d22f27; --w-gnd:#5a3a22; --w-trig:#2563c9; --w-echo:#178a3c; --w-usb:#8a948f; --w-sig:#e8820c;
+  --warn-bg:#fff4e0; --warn-fg:#7a4a00;
+  --f-sans:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif; --f-mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --panel:#1c2220; --fg:#e7ece9; --muted:#9aa5a0; --line:#cfd8d3; --grid:#28302d; --accent:#4cc79c;
+  --w-plus:#ff6a5f; --w-gnd:#c08a5c; --w-trig:#6ea0ff; --w-echo:#4fcf78; --w-usb:#7d8883; --w-sig:#ffa53d;
+  --warn-bg:#3a2c12; --warn-fg:#ffd9a0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --panel:#1c2220; --fg:#e7ece9; --muted:#9aa5a0; --line:#cfd8d3; --grid:#28302d; --accent:#4cc79c;
+  --w-plus:#ff6a5f; --w-gnd:#c08a5c; --w-trig:#6ea0ff; --w-echo:#4fcf78; --w-usb:#7d8883; --w-sig:#ffa53d;
+  --warn-bg:#3a2c12; --warn-fg:#ffd9a0; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-sans);font-size:15px;line-height:1.55}
+.wrap{max-width:1000px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+header h1{font-size:1.7rem;margin:0;text-wrap:balance;letter-spacing:-.01em}
+header p{margin:.35rem 0 0;color:var(--muted);max-width:68ch}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.plan{background:var(--panel);border:1px solid var(--grid);border-radius:10px;padding:12px;overflow-x:auto}
+.plan svg{display:block;min-width:760px;width:100%;height:auto}
+svg text{font-family:var(--f-mono);fill:var(--fg);font-size:12px}
+svg .t-s{font-size:10.5px;fill:var(--muted)}
+svg .t-b{font-family:var(--f-sans);font-weight:700;font-size:13px}
+svg .box{fill:var(--panel);stroke:var(--line);stroke-width:1.6}
+svg .pin{fill:var(--line)} svg .pin2{fill:none;stroke:var(--muted);stroke-width:1.2}
+svg .w{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85rem;color:var(--muted);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:22px;height:4px;border-radius:2px}
+h2{font-size:1.15rem;margin:0 0 10px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--grid);vertical-align:top}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td code,li code{font-family:var(--f-mono);font-size:.88em}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+tr.neu td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.cols>section{min-width:0}
+ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.warn{background:var(--warn-bg);color:var(--warn-fg);border-radius:8px;padding:12px 14px;font-size:.92rem}
+.warn strong{display:block;margin-bottom:2px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Abstandsradar · Phase 3 · Elektronik</div>
+  <h1>Radar komplett: Sensor und Servo am Mega</h1>
+  <p>Der Ultraschallsensor bleibt verdrahtet wie in Phase 2. Neu ist der Servo SG90 an Pin 9. Er bekommt seine 5 V über die + Schiene des Steckbretts vom 5V-Pin der langen Doppel-Stiftleiste des Mega; alles hängt am USB vom PC. Die Powerbank-Variante entfällt, weil die Powerbank bei dem kleinen Strom nach kurzer Zeit abschaltete. Programm: <code>arduino/radar</code>.</p>
+</header>
+
+<div>
+<div class="plan">
+<svg viewBox="0 0 940 740" role="img" aria-labelledby="svgt">
+  <title id="svgt">Schaltplan in Board-Lage: PC per USB an den Mega. HC-SR04 mit Stiftleiste unten (VCC, Trig, Echo, GND): VCC an 5V und GND an GND der linken POWER-Leiste, Trig an Pin 6, Echo an Pin 7. Servo SG90: orange an Pin 9, rot an die Plus-Schiene, braun an die Minus-Schiene. Powerbank USB 2 rote Ader an Plus-Schiene, schwarze an Minus-Schiene. Mega GND neben AREF an die Minus-Schiene. Ein 100-µF-Elko zwischen den Schienen.</title>
+
+  <!-- PC -->
+  <rect class="box" x="20" y="50" width="140" height="100" rx="10"/>
+  <text class="t-b" x="34" y="98">PC</text><text class="t-s" x="34" y="116">USB, Port COM4</text>
+  <rect class="pin" x="152" y="72" width="14" height="16" rx="2"/><text class="t-s" x="122" y="70">USB</text>
+  <path class="w" d="M166 80 H180 V20 H490 V36" stroke="var(--w-usb)" stroke-width="6"/>
+  <text class="t-s" x="196" y="14">USB-Kabel A–B (Kit) · Daten und Strom für den Mega</text>
+
+  <!-- Hinweis: Powerbank entfällt -->
+  <text class="t-s" x="20" y="200">Powerbank entfällt –</text><text class="t-s" x="20" y="214">sie schaltete bei zu</text><text class="t-s" x="20" y="228">wenig Strom ab.</text>
+
+  <!-- Mega 2560 -->
+  <rect class="box" x="300" y="60" width="220" height="500" rx="8"/>
+  <rect class="box" x="306" y="48" width="40" height="40" rx="3"/><text class="t-s" x="352" y="80">Hohlstecker</text>
+  <rect class="box" x="466" y="36" width="48" height="46" rx="3"/><text class="t-s" x="418" y="100">USB-B</text>
+  <text class="t-b" x="340" y="148">Mega 2560</text>
+  <text class="t-s" x="340" y="164">Draufsicht, USB oben</text>
+  <text class="t-s" x="320" y="192">POWER</text><text class="t-s" x="320" y="346">ANALOG IN</text>
+  <rect x="455" y="203" width="9" height="13" rx="2" fill="var(--w-sig)"/><text class="t-s" x="420" y="214">LED L</text>
+
+  <circle class="pin2" cx="300" cy="200" r="3.2"/><text x="310" y="204" class="t-s">IOREF</text>
+  <circle class="pin2" cx="300" cy="220" r="3.2"/><text x="310" y="224" class="t-s">RESET</text>
+  <circle class="pin2" cx="300" cy="240" r="3.2"/><text x="310" y="244" class="t-s">3.3V</text>
+  <circle class="pin" cx="300" cy="260" r="5"/><text x="310" y="264">5V</text>
+  <circle class="pin" cx="300" cy="280" r="5"/><text x="310" y="284">GND</text>
+  <circle class="pin2" cx="300" cy="300" r="3.2"/><text x="310" y="304" class="t-s">GND</text>
+  <circle class="pin2" cx="300" cy="320" r="3.2"/><text x="310" y="324" class="t-s">Vin</text>
+  <circle class="pin2" cx="300" cy="360" r="3.2"/><text x="310" y="364" class="t-s">A0</text>
+  <circle class="pin2" cx="300" cy="380" r="3.2"/><text x="310" y="384" class="t-s">A1</text>
+  <circle class="pin2" cx="300" cy="400" r="3.2"/><text x="310" y="404" class="t-s">A2</text>
+  <circle class="pin2" cx="300" cy="420" r="3.2"/><text x="310" y="424" class="t-s">A3</text>
+
+  <circle class="pin2" cx="520" cy="170" r="3.2"/><text x="510" y="174" text-anchor="end" class="t-s">AREF</text>
+  <circle class="pin" cx="520" cy="190" r="5"/><text x="510" y="194" text-anchor="end">GND</text>
+  <circle class="pin2" cx="520" cy="210" r="3.2"/><text x="510" y="214" text-anchor="end" class="t-s">13</text>
+  <circle class="pin2" cx="520" cy="230" r="3.2"/><text x="510" y="234" text-anchor="end" class="t-s">12</text>
+  <circle class="pin2" cx="520" cy="250" r="3.2"/><text x="510" y="254" text-anchor="end" class="t-s">11</text>
+  <circle class="pin2" cx="520" cy="270" r="3.2"/><text x="510" y="274" text-anchor="end" class="t-s">10</text>
+  <circle class="pin" cx="520" cy="290" r="5"/><text x="510" y="294" text-anchor="end">9</text>
+  <circle class="pin2" cx="520" cy="310" r="3.2"/><text x="510" y="314" text-anchor="end" class="t-s">8</text>
+  <circle class="pin" cx="520" cy="340" r="5"/><text x="510" y="344" text-anchor="end">7</text>
+  <circle class="pin" cx="520" cy="360" r="5"/><text x="510" y="364" text-anchor="end">6</text>
+  <circle class="pin2" cx="520" cy="380" r="3.2"/><text x="510" y="384" text-anchor="end" class="t-s">5</text>
+  <circle class="pin2" cx="520" cy="400" r="3.2"/><text x="510" y="404" text-anchor="end" class="t-s">4</text>
+  <circle class="pin2" cx="520" cy="420" r="3.2"/><text x="510" y="424" text-anchor="end" class="t-s">3</text>
+  <circle class="pin2" cx="520" cy="440" r="3.2"/><text x="510" y="444" text-anchor="end" class="t-s">2</text>
+  <circle class="pin2" cx="520" cy="460" r="3.2"/><text x="510" y="464" text-anchor="end" class="t-s">TX0 1</text>
+  <circle class="pin2" cx="520" cy="480" r="3.2"/><text x="510" y="484" text-anchor="end" class="t-s">RX0 0</text>
+
+  <!-- Doppel-Stiftleiste am Board-Ende (unten in dieser Lage): 5V rechts, GND links -->
+  <rect x="326" y="520" width="188" height="34" rx="3" fill="none" stroke="var(--muted)" stroke-width="1.2"/>
+  <g class="pin2">
+    <circle cx="340" cy="530" r="3"/><circle cx="340" cy="544" r="3"/>
+    <circle cx="358" cy="530" r="3"/><circle cx="358" cy="544" r="3"/>
+    <circle cx="376" cy="530" r="3"/><circle cx="376" cy="544" r="3"/>
+    <circle cx="394" cy="530" r="3"/><circle cx="394" cy="544" r="3"/>
+    <circle cx="412" cy="530" r="3"/><circle cx="412" cy="544" r="3"/>
+    <circle cx="430" cy="530" r="3"/><circle cx="430" cy="544" r="3"/>
+    <circle cx="448" cy="530" r="3"/><circle cx="448" cy="544" r="3"/>
+    <circle cx="466" cy="530" r="3"/><circle cx="466" cy="544" r="3"/>
+    <circle cx="484" cy="530" r="3"/><circle cx="484" cy="544" r="3"/>
+    <circle cx="502" cy="530" r="3"/>
+  </g>
+  <circle class="pin" cx="502" cy="544" r="5"/>
+  <text class="t-s" x="330" y="512">GND</text><text class="t-s" x="380" y="512">52 … 22</text>
+  <text x="514" y="512" text-anchor="end">5V</text>
+  <text class="t-s" x="330" y="500">Doppel-Stiftleiste</text>
+  <path class="w" d="M502 544 V584 A6 6 0 0 1 502 596 V598 A6 6 0 0 1 502 610 V684 A6 6 0 0 1 502 696 V720" stroke="var(--w-plus)"/>
+  <circle cx="502" cy="720" r="5" fill="var(--w-plus)"/>
+  <text class="t-s" x="512" y="660">5V (Doppelleiste) → + Schiene</text>
+
+  <!-- Servo SG90 -->
+  <rect class="box" x="690" y="150" width="170" height="72" rx="8"/>
+  <text class="t-b" x="726" y="180">Servo SG90</text><text class="t-s" x="726" y="198">Stecker 3-polig</text>
+  <text class="t-s" x="726" y="212">orange · rot · braun</text>
+  <circle class="pin" cx="690" cy="165" r="4"/><circle class="pin" cx="690" cy="185" r="4"/><circle class="pin" cx="690" cy="205" r="4"/>
+  <path class="w" d="M520 290 H620 V165 H690" stroke="var(--w-sig)"/>
+  <path class="w" d="M690 185 H660 V250 H880 V684 A6 6 0 0 1 880 696 V720" stroke="var(--w-plus)"/>
+  <path class="w" d="M690 205 H670 V240 H895 V690" stroke="var(--w-gnd)"/>
+  <circle cx="880" cy="720" r="5" fill="var(--w-plus)"/><circle cx="895" cy="690" r="5" fill="var(--w-gnd)"/>
+
+  <!-- Mega GND (rechts oben) an Minus-Schiene: gemeinsame Masse -->
+  <path class="w" d="M520 190 H540 V120 H920 V690" stroke="var(--w-gnd)"/>
+  <circle cx="920" cy="690" r="5" fill="var(--w-gnd)"/>
+  <text class="t-s" x="560" y="112">GND neben AREF → − Schiene (gemeinsame Masse)</text>
+
+  <!-- HC-SR04, Stiftleiste unten -->
+  <text class="t-b" x="660" y="290">Ultraschallsensor HC-SR04</text>
+  <rect class="box" x="660" y="300" width="200" height="100" rx="6"/>
+  <circle cx="710" cy="345" r="26" fill="none" stroke="var(--line)" stroke-width="1.6"/>
+  <circle cx="710" cy="345" r="13" fill="none" stroke="var(--line)" stroke-width="1.2"/>
+  <circle cx="810" cy="345" r="26" fill="none" stroke="var(--line)" stroke-width="1.6"/>
+  <circle cx="810" cy="345" r="13" fill="none" stroke="var(--line)" stroke-width="1.2"/>
+  <text class="t-s" x="706" y="312">T</text><text class="t-s" x="806" y="312">R</text>
+  <rect class="box" x="668" y="400" width="114" height="12" rx="2"/>
+  <circle class="pin" cx="680" cy="416" r="4"/><circle class="pin" cx="710" cy="416" r="4"/><circle class="pin" cx="740" cy="416" r="4"/><circle class="pin" cx="770" cy="416" r="4"/>
+  <text class="t-s" x="680" y="393" text-anchor="middle">VCC</text><text class="t-s" x="710" y="393" text-anchor="middle">Trig</text><text class="t-s" x="740" y="393" text-anchor="middle">Echo</text><text class="t-s" x="770" y="393" text-anchor="middle">GND</text>
+  <text class="t-s" x="796" y="420">wie Phase 2,</text><text class="t-s" x="796" y="434">nichts ändern</text>
+
+  <!-- Sensor-Kabel -->
+  <path class="w" d="M520 360 H580 V450 H710 V420" stroke="var(--w-trig)"/>
+  <path class="w" d="M520 340 H600 V444 A6 6 0 0 1 600 456 V470 H740 V420" stroke="var(--w-echo)"/>
+  <path class="w" d="M300 260 H252 V590 H680 V420" stroke="var(--w-plus)"/>
+  <path class="w" d="M300 280 H258 A6 6 0 0 0 246 280 H238 V604 H770 V420" stroke="var(--w-gnd)"/>
+  <text class="t-s" x="270" y="582">5V vom Mega → Sensor VCC</text>
+  <text class="t-s" x="270" y="622">GND vom Mega → Sensor GND</text>
+
+  <!-- Steckbrett-Schienen -->
+  <line x1="95" y1="690" x2="928" y2="690" stroke="var(--w-gnd)" stroke-width="5" stroke-linecap="round"/>
+  <line x1="95" y1="720" x2="928" y2="720" stroke="var(--w-plus)" stroke-width="5" stroke-linecap="round"/>
+  <text class="t-s" x="260" y="682">Steckbrett − Schiene (blaue Linie) · GND gemeinsam</text>
+  <text class="t-s" x="260" y="738">Steckbrett + Schiene (rote Linie) · 5 V nur für den Servo</text>
+  <g stroke="var(--line)" stroke-width="2" fill="none">
+    <line x1="130" y1="690" x2="130" y2="700"/><path d="M120 708 Q130 702 140 708" stroke-width="2.5"/><line x1="120" y1="712" x2="140" y2="712" stroke-width="2.5"/><line x1="130" y1="712" x2="130" y2="720"/>
+  </g>
+  <text class="t-s" x="100" y="672">100 µF</text>
+  <circle cx="130" cy="690" r="4" fill="var(--w-gnd)"/><circle cx="130" cy="720" r="4" fill="var(--w-plus)"/>
+</svg>
+</div>
+<div class="legend">
+  <span><i style="background:var(--w-plus)"></i>+5 V</span>
+  <span><i style="background:var(--w-gnd)"></i>GND</span>
+  <span><i style="background:var(--w-sig)"></i>Servo-Signal → 9</span>
+  <span><i style="background:var(--w-trig)"></i>Trig → 6</span>
+  <span><i style="background:var(--w-echo)"></i>Echo → 7</span>
+  <span>Punkt = Verbindung · Bogen = Kreuzung ohne Verbindung · leere Kreise = Pins, die frei bleiben</span>
+</div>
+</div>
+
+<section>
+  <h2>Verdrahtungsliste</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Von</th><th>Nach</th><th>Hinweis</th></tr></thead>
+    <tbody>
+      <tr class="neu"><td><span class="sw" style="background:var(--w-plus)"></span>Mega <code>5V</code> an der langen Doppel-Stiftleiste (Ende neben Pin 22/23)</td><td>Steckbrett + Schiene</td><td>Jumper Stecker–Stecker · ersetzt die rote Powerbank-Ader</td></tr>
+      <tr><td>Powerbank-Adern rot und schwarz</td><td>—</td><td><strong>von den Schienen abziehen</strong></td></tr>
+      <tr class="neu"><td><span class="sw" style="background:var(--w-sig)"></span>Servo orange</td><td>Mega rechte Leiste <code>9</code></td><td>Jumper Stecker–Stecker</td></tr>
+      <tr class="neu"><td><span class="sw" style="background:var(--w-plus)"></span>Servo rot</td><td>+ Schiene</td><td>Jumper Stecker–Stecker</td></tr>
+      <tr class="neu"><td><span class="sw" style="background:var(--w-gnd)"></span>Servo braun</td><td>− Schiene</td><td>Jumper Stecker–Stecker</td></tr>
+      <tr class="neu"><td><span class="sw" style="background:var(--w-gnd)"></span>Mega <code>GND</code> rechts oben neben <code>AREF</code></td><td>− Schiene</td><td>Jumper · <strong>gemeinsame Masse, nicht weglassen</strong></td></tr>
+      <tr class="neu"><td>Elko 100 µF</td><td>zwischen + und − Schiene</td><td>langes Bein an +, Streifen an −</td></tr>
+      <tr><td><span class="sw" style="background:var(--w-plus)"></span>Sensor <code>VCC</code></td><td>Mega linke Leiste <code>5V</code></td><td>bleibt wie in Phase 2</td></tr>
+      <tr><td><span class="sw" style="background:var(--w-gnd)"></span>Sensor <code>GND</code></td><td>Mega linke Leiste <code>GND</code></td><td>bleibt wie in Phase 2</td></tr>
+      <tr><td><span class="sw" style="background:var(--w-trig)"></span>Sensor <code>Trig</code></td><td>Mega <code>6</code></td><td>bleibt wie in Phase 2</td></tr>
+      <tr><td><span class="sw" style="background:var(--w-echo)"></span>Sensor <code>Echo</code></td><td>Mega <code>7</code></td><td>bleibt wie in Phase 2</td></tr>
+    </tbody>
+  </table></div>
+  <p style="color:var(--muted);font-size:.88rem;margin:8px 0 0">Grün markierte Zeilen sind neu. Der Sensor ist hier mit der Stiftleiste nach unten gezeichnet, damit der Plan übersichtlich bleibt – an den Kabeln ändert sich nichts.</p>
+</section>
+
+<div class="cols">
+<section>
+  <h2>Reihenfolge</h2>
+  <ol>
+    <li>USB vom Mega abziehen. Verdrahtet wird stromlos.</li>
+    <li>Rote und schwarze Powerbank-Ader von den Schienen abziehen.</li>
+    <li>Die lange Doppel-Stiftleiste am Board-Ende suchen (Pins 22–53). An dem Ende, das zu Pin 22/23 gehört, sind zwei Pins mit <code>5V</code> beschriftet. Von einem davon ein Kabel auf die + Schiene stecken.</li>
+    <li>Elko und die Mega-<code>GND</code>-Brücke bleiben auf den Schienen. Steckbrett-Schienen in der Mitte unterbrochen? Dann je eine Brücke über die Lücke.</li>
+    <li>Servo anschließen: orange an <code>9</code>, rot an +, braun an −. Den Sensor erst nach dem ersten Schwenk-Test provisorisch aufs Servohorn kleben (Klebeband/Gummiband) – der richtige Halter kommt in Phase 5.</li>
+    <li>Kontrolle: <code>5V</code> nur an +, <code>GND</code> nur an −. Nichts an <code>5V</code> und <code>GND</code> gleichzeitig.</li>
+    <li>Mega per USB an den PC. Das Programm <code>radar</code> ist schon drauf, der Servo schwenkt sofort.</li>
+  </ol>
+</section>
+<section style="display:flex;flex-direction:column;gap:12px">
+  <div class="warn"><strong>Mega startet neu?</strong>Jetzt teilen sich Mega, Sensor und Servo die 5 V vom PC-USB. Zieht der Servo beim Anlaufen zu viel, startet der Mega neu – im Radarbild springt der Strahl dann auf 0° zurück. Abhilfe: zweiter Elko 100 µF parallel, oder das Netzteilmodul aus dem Kit.</div>
+  <div class="warn"><strong>Servo nicht blockieren</strong>Hält man den Servo fest, zieht er bis ca. 0,6 A. Das überlastet den USB-Anschluss. Sensor nur leicht befestigen, nichts in den Schwenkbereich klemmen.</div>
+</section>
+</div>
+</div>

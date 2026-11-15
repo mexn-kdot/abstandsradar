@@ -32,7 +32,7 @@ Die Ordner entstehen, sobald es dort den ersten Inhalt gibt – Git speichert ke
 
 - [x] **Phase 1:** Repo anlegen, erster Commit
 - [x] **Phase 2:** LED blinkt (Upload funktioniert), Ultraschallsensor auslesen – Verdrahtung: `docs/verdrahtung-ultraschall.html`
-- [ ] **Phase 3:** Servo schwenkt, Arduino sendet `Winkel,Abstand`
-- [ ] **Phase 4:** Python-Radarbild am PC
+- [x] **Phase 3:** Servo schwenkt, Arduino sendet `Winkel,Abstand` – Verdrahtung: `docs/verdrahtung-radar.html`, Programm: `arduino/radar`
+- [x] **Phase 4:** Python-Radarbild am PC – `python pc/radar.py` (Live-Kurve ohne Servo: `pc/live_abstand.py`)
 - [ ] **Phase 5:** Halter konstruieren (Fusion-MCP), drucken, montieren
 - [ ] **Phase 6:** Auf GitHub hochladen
