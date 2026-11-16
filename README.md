@@ -39,7 +39,7 @@ Die Ordner entstehen, sobald es dort den ersten Inhalt gibt – Git speichert ke
   - [x] `halter/Deckel_Radar.stl`: neuer Deckel für die Kiste, gleiche 4 × M3 wie der alte. SG90 hängt im Ausschnitt (Welle in Deckelmitte), Laschen oben auf, 1 Schraube M2 direkt in den 3-mm-Deckel (Kernloch 1,7 durchgehend). Kabelnut fürs Servokabel, Kabelschlitz hinten mittig (7 mm, zum Rand offen) für die Sensorkabel. Druck: flache Unterseite aufs Bett (Einbaulage), ca. 31 g.
   - [x] `halter/Sensorhalter.stl`: Winkel mit Horntasche quer (Doppelarm 32 mm) und Hornschraube von oben (Senkung Ø 5). HC-SR04 kopfüber auf 4 Buchsen, Schrauben M1,6, Stiftleiste oben, Kabel als Schlaufe frei. Druck: Horntasche aufs Bett, ca. 6,5 g.
   - [x] Gedruckt und montiert. Die Bohrungen für den Sensor passten nicht, deshalb ist der HC-SR04 aufgeklebt. Für einen Nachdruck den Lochabstand am eigenen Sensor nachmessen.
-- [ ] **Phase 6:** Auf GitHub hochladen
+- [x] **Phase 6:** Auf GitHub hochladen – https://github.com/mexn-kdot/abstandsradar
 
 ## Ideen für später
 
